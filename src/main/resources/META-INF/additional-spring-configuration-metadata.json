@@ -1,0 +1,7 @@
+{
+  "properties": [{
+      "name": "dataotter-appid",
+      "type": "java.lang.Long",
+      "description": "DataOtter app id."
+  }]
+}
