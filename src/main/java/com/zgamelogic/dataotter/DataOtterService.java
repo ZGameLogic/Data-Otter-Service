@@ -31,7 +31,7 @@ public class DataOtterService {
             @Value("${dataotter-api-key}") String apiKey
     ) {
         this.appid = appid;
-        baseUrl = "http://20.40.218.161:8080";
+        baseUrl = "http://44.201.152.75:8080";
         restTemplate = new RestTemplate();
         httpHeaders = new HttpHeaders();
         httpHeaders.add("api-key", apiKey);
