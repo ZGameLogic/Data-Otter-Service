@@ -21,20 +21,20 @@ import java.util.concurrent.Executor;
 @EnableAsync
 @Async("dataOtterServiceExecutor")
 public class DataOtterService {
+    private final String dataotterUrl;
     private final long appid;
-    private final String baseUrl;
     private final RestTemplate restTemplate;
     private final HttpHeaders httpHeaders;
 
     public DataOtterService(
-            @Value("${dataotter-appid}") long appid,
-            @Value("${dataotter-api-key}") String apiKey
+            @Value("${dataotter.url}") String dataotterUrl,
+            @Value("${dataotter.appid}") long appid
     ) {
+        this.dataotterUrl = dataotterUrl;
         this.appid = appid;
-        baseUrl = "http://44.201.152.75:8080";
         restTemplate = new RestTemplate();
         httpHeaders = new HttpHeaders();
-        httpHeaders.add("api-key", apiKey);
+        httpHeaders.add("api-key", 0 + "");
     }
 
     /**
@@ -56,7 +56,7 @@ public class DataOtterService {
             }
         }
         try {
-            String url = baseUrl + "/rocks/" + appid;
+            String url = dataotterUrl + "/rocks/" + appid;
             HttpEntity<String> requestEntity = new HttpEntity<>(payload, httpHeaders);
             restTemplate.postForObject(url, requestEntity, String.class);
         } catch (RestClientException e) {

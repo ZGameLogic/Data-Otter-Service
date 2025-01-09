@@ -1,11 +1,11 @@
 {
   "properties": [{
-      "name": "dataotter-appid",
+      "name": "dataotter.appid",
       "type": "java.lang.Long",
       "description": "Data Otter app id."
   },{
-      "name": "dataotter-api-key",
+      "name": "dataotter.url",
       "type": "java.lang.String",
-      "description": "Data Otter API key."
+      "description": "Data Otter base url."
   }]
 }
