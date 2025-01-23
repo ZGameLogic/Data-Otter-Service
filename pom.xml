@@ -6,7 +6,7 @@
 
     <groupId>com.zgamelogic</groupId>
     <artifactId>dataotter-service</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <description>A small package to add ease of operations with dataotter data collection.</description>
     <url>https://github.com/ZGameLogic/Data-Otter-Service</url>
     <developers>

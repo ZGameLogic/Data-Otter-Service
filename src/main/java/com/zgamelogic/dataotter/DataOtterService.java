@@ -2,8 +2,10 @@ package com.zgamelogic.dataotter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zgamelogic.dataotter.data.Monitor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 @Slf4j
@@ -23,18 +27,24 @@ import java.util.concurrent.Executor;
 public class DataOtterService {
     private final String dataotterUrl;
     private final long appid;
+    private final boolean enabled;
     private final RestTemplate restTemplate;
     private final HttpHeaders httpHeaders;
 
     public DataOtterService(
             @Value("${dataotter.url}") String dataotterUrl,
-            @Value("${dataotter.appid}") long appid
+            @Value("${dataotter.appid}") long appid,
+            @Value("${dataotter.enabled:true}") boolean enabled
     ) {
         this.dataotterUrl = dataotterUrl;
         this.appid = appid;
+        this.enabled = enabled;
         restTemplate = new RestTemplate();
         httpHeaders = new HttpHeaders();
         httpHeaders.add("api-key", 0 + "");
+        if(!enabled) {
+            log.warn("DataOtter service is currently disabled. Rocks will not be tracked");
+        }
     }
 
     /**
@@ -42,7 +52,7 @@ public class DataOtterService {
      * @param pebble String or object containing data
      */
     public void sendRock(Object pebble){
-        if(pebble == null) return;
+        if(pebble == null || !enabled) return;
         String payload;
         if(pebble instanceof String){
             payload = (String) pebble;
@@ -62,6 +72,20 @@ public class DataOtterService {
         } catch (RestClientException e) {
             log.error("Unable to send rock", e);
         }
+    }
+
+    /**
+     * Gets a list of monitors and their statuses
+     * @return List of monitors with their statuses
+     */
+    public List<Monitor> getMonitorsStatus(){
+        String URL = dataotterUrl + "/monitors?include-status=true";
+        try {
+            return List.of(restTemplate.getForObject(new URI(URL), Monitor[].class));
+        } catch (Exception e) {
+            log.error("Error fetching monitors", e);
+        }
+        return List.of();
     }
 
     private static class DataOtterExecutorConfig {

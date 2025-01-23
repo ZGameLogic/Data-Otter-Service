@@ -7,5 +7,10 @@
       "name": "dataotter.url",
       "type": "java.lang.String",
       "description": "Data Otter base url."
+  },{
+    "name": "dataotter.enabled",
+    "defaultValue": true,
+    "type": "java.lang.Boolean",
+    "description": "Set this to false to disable."
   }]
 }
