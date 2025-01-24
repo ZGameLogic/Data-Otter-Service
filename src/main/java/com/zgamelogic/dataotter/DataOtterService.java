@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @Slf4j
@@ -77,14 +78,15 @@ public class DataOtterService {
      * Gets a list of monitors and their statuses
      * @return List of monitors with their statuses
      */
-    public List<Monitor> getMonitorsStatus(){
+    @Async
+    public CompletableFuture<List<Monitor>> getMonitorsStatus(){
         String URL = dataotterUrl + "/monitors?include-status=true";
         try {
-            return List.of(restTemplate.getForObject(new URI(URL), Monitor[].class));
+            return CompletableFuture.completedFuture(List.of(restTemplate.getForObject(new URI(URL), Monitor[].class)));
         } catch (Exception e) {
             log.error("Error fetching monitors", e);
         }
-        return List.of();
+        return CompletableFuture.completedFuture(List.of());
     }
 
     private static class DataOtterExecutorConfig {
