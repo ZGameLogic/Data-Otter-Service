@@ -51,7 +51,7 @@ public class DataOtterService {
 
     @EventListener
     void handleRockEvent(DataOtterRockEvent event) {
-        System.out.println("Received rock event: " + event);
+        sendRock(event.getPebble());
     }
 
     /**
