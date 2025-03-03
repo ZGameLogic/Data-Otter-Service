@@ -2,10 +2,12 @@ package com.zgamelogic.dataotter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zgamelogic.dataotter.data.DataOtterRockEvent;
 import com.zgamelogic.dataotter.data.Monitor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Async;
@@ -45,6 +47,11 @@ public class DataOtterService {
         if(!enabled) {
             log.warn("DataOtter service is currently disabled. Rocks will not be tracked");
         }
+    }
+
+    @EventListener
+    void handleRockEvent(DataOtterRockEvent event) {
+        System.out.println("Received rock event: " + event);
     }
 
     /**
