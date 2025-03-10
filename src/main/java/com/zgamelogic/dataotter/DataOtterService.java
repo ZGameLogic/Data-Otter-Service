@@ -2,6 +2,7 @@ package com.zgamelogic.dataotter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zgamelogic.dataotter.data.DataOtterMetricEvent;
 import com.zgamelogic.dataotter.data.DataOtterRockEvent;
 import com.zgamelogic.dataotter.data.Monitor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -52,6 +55,34 @@ public class DataOtterService {
     @EventListener
     void handleRockEvent(DataOtterRockEvent event) {
         sendRock(event.getPebble());
+    }
+
+    @EventListener
+    void handleMetricEvent(DataOtterMetricEvent event){
+        sendMetric(event.getAppId(), event.getResource(), event.getData(), event.getUnit());
+    }
+
+    /**
+     * Sends a metric to DataOtter
+     * @param appId Application ID
+     * @param resource resource path for the metric name
+     * @param data data to be sent for metric
+     * @param unit unit the data has if any
+     */
+    public void sendMetric(long appId, String resource, String data, String unit) {
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("application id", appId);
+        jsonMap.put("resource", resource);
+        jsonMap.put("data", data);
+        jsonMap.put("unit", unit);
+        try {
+            String payload = new ObjectMapper().writeValueAsString(jsonMap);
+            String url = dataotterUrl + "/metrics/" + appid;
+            HttpEntity<String> requestEntity = new HttpEntity<>(payload, httpHeaders);
+            restTemplate.postForObject(url, requestEntity, String.class);
+        } catch (RestClientException | JsonProcessingException e) {
+            log.error("Unable to send metric", e);
+        }
     }
 
     /**
